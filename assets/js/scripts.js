@@ -54,17 +54,10 @@ function CheckCustomer () {
     action: 'is_user_logged_in'
   };
   
-  jQuery.post(adminAjax.ajaxurl, data, function(response) {
-    if(response == 'yes') {
-        // user is logged in, do your stuff here
-        console.log('customer')
-        return 'customer'
-    } else {
-        // user is not logged in, show login form here
-        console.log('visitor')
-        return 'visitor'
-    }
+   var result = jQuery.post(adminAjax.ajaxurl, data, function(response) {
+  // console.log(response)
   });
+  return result == 'yes' ? 'customer' : 'visitor'
 }
 
 
@@ -103,16 +96,76 @@ function GetVisitorSale() {
   return res.status == 200 ? res.responseJSON : 0;
 }
 
-if ($('body').hasClass('single-product')){
- 
-  // GetCustomerSale()
-  // GetVisitorSale()
-  console.log(GetCustomerSale())
-  console.log(GetVisitorSale())
+function ShowSale(isNeedShowSale, sale) {
+  if (isNeedShowSale) {
+    // alert(`you sale is: ${sale}`)
+    console.log(`you sale is: ${sale}`)
+  }
+  
+}
 
+
+
+
+function TrackUserActivity() {
+  const key = 'visited_pages';
+  const result = LSsave(key, adminAjax.postID);
+  // console.log(result)
+}
+
+function isUserVisitedThisPage(id){
+  const key = 'visited_pages';
+  const arrVisited = LSget(key); 
+  const result = arrVisited.includes(id);
+  // console.log(result)
+  return result
+}
+
+function LSsave(key, item = 0) {
+  let data = [];
+  let storageItems = JSON.parse(localStorage.getItem(key))
+  console.log(storageItems)
+  if (Array.isArray(storageItems)) {
+    data = storageItems
+  }
+
+  data.push(item)
+
+  const uniq = [...new Set(data)];
+
+  localStorage.setItem(key, JSON.stringify(uniq))
+
+  const result = JSON.parse(localStorage.getItem(key))
+  return result
+}
+
+function LSget(key) {
+  const data = JSON.parse(localStorage.getItem(key))
+  const result = Array.isArray(data) ? data : []
+  return result
+}
+
+if ($('body').hasClass('single-product')){
 
   (async () => {
-    let customer = await CheckCustomer();
-    console.log(customer)
+    
+    let isNeedShowSale = await isUserVisitedThisPage(adminAjax.postID) 
+    
+    let userstate = await CheckCustomer();
+
+    let sale = userstate == 'customer' ?   GetCustomerSale() : GetVisitorSale() 
+
+    await ShowSale(isNeedShowSale, sale);
+
+    await TrackUserActivity()
+
   })();
+
+  $(document).bind("mouseleave", function(e) {
+    if (e.pageY - $(window).scrollTop() <= 1) {    
+      alert('Stop! Dont Go! Your sale is 3%')
+    }
+});
 }
+
+

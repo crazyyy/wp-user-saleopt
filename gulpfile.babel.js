@@ -278,11 +278,9 @@ gulp.task('scripts', function() {
     .pipe(plugins.newer(config.path.scripts.dest))
     .pipe(customPlumber('Error Compiling Scripts'))
     .pipe(plugins.if(!env_prod, plugins.sourcemaps.init()))
-    .pipe(plugins.babel({
-			presets: ['env']
-		}))
+    .pipe(plugins.babel())
     .pipe(plugins.if(['scripts.js' /*,'scripts2.js'*/], jsConcat()))
-    .pipe(plugins.if('*.js', plugins.uglify()))
+    // .pipe(plugins.if('*.js', plugins.uglify()))
     .pipe(plugins.if(!env_prod, plugins.sourcemaps.write('maps', {includeContent: true})))
     .pipe(gulp.dest(config.path.scripts.dest))
     .pipe(plugins.filter('**/*.js'))
