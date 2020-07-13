@@ -46,4 +46,73 @@ if (typeof jQuery === "undefined") {
   console.log("jQuery " + jQuery.fn.jquery + " has loaded")
 }
 // Place any jQuery/helper plugins in here.
-console.log('2')
+
+var $ = jQuery
+
+function CheckCustomer () {
+  var data = {
+    action: 'is_user_logged_in'
+  };
+  
+  jQuery.post(adminAjax.ajaxurl, data, function(response) {
+    if(response == 'yes') {
+        // user is logged in, do your stuff here
+        console.log('customer')
+        return 'customer'
+    } else {
+        // user is not logged in, show login form here
+        console.log('visitor')
+        return 'visitor'
+    }
+  });
+}
+
+
+function GetCustomerSale() {
+  var res = jQuery.ajax({ 
+		url : adminAjax.ajaxurl,
+		type : 'POST',
+		dataType: "json",
+		async: false,
+		data : {
+      action: 'customer_sale',
+      id: adminAjax.postID
+		},
+		success: function(obj) {
+      // console.log(obj);
+		}
+  });
+  return res.status == 200 ? res.responseJSON : 0;
+
+}
+
+function GetVisitorSale() {
+  var res = jQuery.ajax({ 
+		url : adminAjax.ajaxurl,
+		type : 'POST',
+		dataType: "json",
+		async: false,
+		data : {
+      action: 'visitor_sale',
+      id: adminAjax.postID
+		},
+		success: function(obj) {
+      // console.log(obj);
+		}
+  });
+  return res.status == 200 ? res.responseJSON : 0;
+}
+
+if ($('body').hasClass('single-product')){
+ 
+  // GetCustomerSale()
+  // GetVisitorSale()
+  console.log(GetCustomerSale())
+  console.log(GetVisitorSale())
+
+
+  (async () => {
+    let customer = await CheckCustomer();
+    console.log(customer)
+  })();
+}
