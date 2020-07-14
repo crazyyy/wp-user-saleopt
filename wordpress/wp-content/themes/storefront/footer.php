@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The template for displaying the footer.
  *
@@ -9,32 +10,41 @@
 
 ?>
 
-		</div><!-- .col-full -->
-	</div><!-- #content -->
+</div><!-- .col-full -->
+</div><!-- #content -->
 
-	<?php do_action( 'storefront_before_footer' ); ?>
+<?php do_action('storefront_before_footer'); ?>
 
-	<footer id="colophon" class="site-footer" role="contentinfo">
-		<div class="col-full">
+<footer id="colophon" class="site-footer" role="contentinfo">
+  <div class="col-full">
 
-			<?php
-			/**
-			 * Functions hooked in to storefront_footer action
-			 *
-			 * @hooked storefront_footer_widgets - 10
-			 * @hooked storefront_credit         - 20
-			 */
-			do_action( 'storefront_footer' );
-			?>
+    <?php
+    /**
+     * Functions hooked in to storefront_footer action
+     *
+     * @hooked storefront_footer_widgets - 10
+     * @hooked storefront_credit         - 20
+     */
+    do_action('storefront_footer');
+    ?>
 
-		</div><!-- .col-full -->
-	</footer><!-- #colophon -->
+  </div><!-- .col-full -->
+</footer><!-- #colophon -->
 
-	<?php do_action( 'storefront_after_footer' ); ?>
+<?php do_action('storefront_after_footer'); ?>
 
 </div><!-- #page -->
 
+<div class="mask" role="dialog"></div>
+<div class="modal" role="alert">
+  <div class="modal-container"></div>
+  <button class="close" role="button">X</button>
+</div>
+
 <?php wp_footer(); ?>
 
+
+
 </body>
+
 </html>

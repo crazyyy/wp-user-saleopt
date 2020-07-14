@@ -1,97 +1,70 @@
-// Avoid `console` errors in browsers that lack a console.
-(function() {
-  var method
-  var noop = function() {}
-  var methods = [
-    "assert",
-    "clear",
-    "count",
-    "debug",
-    "dir",
-    "dirxml",
-    "error",
-    "exception",
-    "group",
-    "groupCollapsed",
-    "groupEnd",
-    "info",
-    "log",
-    "markTimeline",
-    "profile",
-    "profileEnd",
-    "table",
-    "time",
-    "timeEnd",
-    "timeline",
-    "timelineEnd",
-    "timeStamp",
-    "trace",
-    "warn"
-  ]
-  var length = methods.length
-  var console = (window.console = window.console || {})
-
-  while (length--) {
-    method = methods[length]
-
-    // Only stub undefined methods.
-    if (!console[method]) {
-      console[method] = noop
-    }
-  }
-})()
 if (typeof jQuery === "undefined") {
   console.warn("jQuery hasn't loaded")
 } else {
   console.log("jQuery " + jQuery.fn.jquery + " has loaded")
 }
 // Place any jQuery/helper plugins in here.
-
 var $ = jQuery
 
-function CheckCustomer () {
+function CheckCustomer() {
   var data = {
     action: 'is_user_logged_in'
   };
-  
-   var result = jQuery.post(adminAjax.ajaxurl, data, function(response) {
-  // console.log(response)
+
+  var result = jQuery.post(adminAjax.ajaxurl, data, function (response) {
+    // console.log(response)
   });
   return result == 'yes' ? 'customer' : 'visitor'
 }
 
 
 function GetCustomerSale() {
-  var res = jQuery.ajax({ 
-		url : adminAjax.ajaxurl,
-		type : 'POST',
-		dataType: "json",
-		async: false,
-		data : {
+  var res = jQuery.ajax({
+    url: adminAjax.ajaxurl,
+    type: 'POST',
+    dataType: "json",
+    async: false,
+    data: {
       action: 'customer_sale',
       id: adminAjax.postID
-		},
-		success: function(obj) {
+    },
+    success: function (obj) {
       // console.log(obj);
-		}
+    }
   });
   return res.status == 200 ? res.responseJSON : 0;
 
 }
 
 function GetVisitorSale() {
-  var res = jQuery.ajax({ 
-		url : adminAjax.ajaxurl,
-		type : 'POST',
-		dataType: "json",
-		async: false,
-		data : {
+  var res = jQuery.ajax({
+    url: adminAjax.ajaxurl,
+    type: 'POST',
+    dataType: "json",
+    async: false,
+    data: {
       action: 'visitor_sale',
       id: adminAjax.postID
-		},
-		success: function(obj) {
+    },
+    success: function (obj) {
       // console.log(obj);
-		}
+    }
+  });
+  return res.status == 200 ? res.responseJSON : 0;
+}
+
+function GetGlobalDiscount() {
+  var res = jQuery.ajax({
+    url: adminAjax.ajaxurl,
+    type: 'POST',
+    dataType: "json",
+    async: false,
+    data: {
+      action: 'global_discount',
+    },
+    success: function (obj) {
+      console.log(obj);
+    }
   });
   return res.status == 200 ? res.responseJSON : 0;
 }
@@ -99,12 +72,14 @@ function GetVisitorSale() {
 function ShowSale(isNeedShowSale, sale) {
   if (isNeedShowSale) {
     // alert(`you sale is: ${sale}`)
-    console.log(`you sale is: ${sale}`)
+    // console.log(`you sale is: ${sale}`)
+    setTimeout(() => {
+      ShowModal(`You are WINNER!! your discount ${sale}`)
+    }, 5000);
+    
   }
-  
+
 }
-
-
 
 
 function TrackUserActivity() {
@@ -113,9 +88,9 @@ function TrackUserActivity() {
   // console.log(result)
 }
 
-function isUserVisitedThisPage(id){
+function isUserVisitedThisPage(id) {
   const key = 'visited_pages';
-  const arrVisited = LSget(key); 
+  const arrVisited = LSget(key);
   const result = arrVisited.includes(id);
   // console.log(result)
   return result
@@ -145,15 +120,15 @@ function LSget(key) {
   return result
 }
 
-if ($('body').hasClass('single-product')){
+if ($('body').hasClass('single-product')) {
 
   (async () => {
-    
-    let isNeedShowSale = await isUserVisitedThisPage(adminAjax.postID) 
-    
+
+    let isNeedShowSale = await isUserVisitedThisPage(adminAjax.postID)
+
     let userstate = await CheckCustomer();
 
-    let sale = userstate == 'customer' ?   GetCustomerSale() : GetVisitorSale() 
+    let sale = userstate == 'customer' ? GetCustomerSale() : GetVisitorSale()
 
     await ShowSale(isNeedShowSale, sale);
 
@@ -161,11 +136,37 @@ if ($('body').hasClass('single-product')){
 
   })();
 
-  $(document).bind("mouseleave", function(e) {
-    if (e.pageY - $(window).scrollTop() <= 1) {    
-      alert('Stop! Dont Go! Your sale is 3%')
+
+  const globalDiscount = GetGlobalDiscount();
+  $(document).bind("mouseleave", function (e) {
+    if (e.pageY - $(window).scrollTop() <= 1) {
+      // alert('Stop! Dont Go! Your sale is 3%')
+      ShowModal(`Please do not go!! we give you a gif with discount ${globalDiscount}%`)
     }
-});
+  });
 }
 
 
+
+// modal 
+// Click function for show the Modal
+function ShowModal(message) {
+  $(".mask").addClass("active");
+  $('.modal-container').html(message)
+}
+
+// Function for close the Modal
+function closeModal(){
+  $(".mask").removeClass("active");
+  $('.modal-container').html('')
+}
+// Call the closeModal function on the clicks/keyboard
+$(".close, .mask").on("click", function(){
+  closeModal();
+});
+
+$(document).keyup(function(e) {
+  if (e.keyCode == 27) {
+    closeModal();
+  }
+});

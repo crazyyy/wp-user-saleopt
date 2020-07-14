@@ -4,25 +4,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-// Avoid `console` errors in browsers that lack a console.
-(function () {
-  var method;
-
-  var noop = function noop() {};
-
-  var methods = ["assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd", "table", "time", "timeEnd", "timeline", "timelineEnd", "timeStamp", "trace", "warn"];
-  var length = methods.length;
-  var console = window.console = window.console || {};
-
-  while (length--) {
-    method = methods[length]; // Only stub undefined methods.
-
-    if (!console[method]) {
-      console[method] = noop;
-    }
-  }
-})();
-
 if (typeof jQuery === "undefined") {
   console.warn("jQuery hasn't loaded");
 } else {
@@ -73,10 +54,29 @@ function GetVisitorSale() {
   return res.status == 200 ? res.responseJSON : 0;
 }
 
+function GetGlobalDiscount() {
+  var res = jQuery.ajax({
+    url: adminAjax.ajaxurl,
+    type: 'POST',
+    dataType: "json",
+    async: false,
+    data: {
+      action: 'global_discount'
+    },
+    success: function success(obj) {
+      console.log(obj);
+    }
+  });
+  return res.status == 200 ? res.responseJSON : 0;
+}
+
 function ShowSale(isNeedShowSale, sale) {
   if (isNeedShowSale) {
     // alert(`you sale is: ${sale}`)
-    console.log("you sale is: ".concat(sale));
+    // console.log(`you sale is: ${sale}`)
+    setTimeout(() => {
+      ShowModal("You are WINNER!! your discount ".concat(sale));
+    }, 5000);
   }
 }
 
@@ -125,9 +125,34 @@ if ($('body').hasClass('single-product')) {
     yield TrackUserActivity();
   })();
 
+  var globalDiscount = GetGlobalDiscount();
   $(document).bind("mouseleave", function (e) {
     if (e.pageY - $(window).scrollTop() <= 1) {
-      alert('Stop! Dont Go! Your sale is 3%');
+      // alert('Stop! Dont Go! Your sale is 3%')
+      ShowModal("Please do not go!! we give you a gif with discount ".concat(globalDiscount, "%"));
     }
   });
-}
+} // modal 
+// Click function for show the Modal
+
+
+function ShowModal(message) {
+  $(".mask").addClass("active");
+  $('.modal-container').html(message);
+} // Function for close the Modal
+
+
+function closeModal() {
+  $(".mask").removeClass("active");
+  $('.modal-container').html('');
+} // Call the closeModal function on the clicks/keyboard
+
+
+$(".close, .mask").on("click", function () {
+  closeModal();
+});
+$(document).keyup(function (e) {
+  if (e.keyCode == 27) {
+    closeModal();
+  }
+});
