@@ -35,12 +35,6 @@
 
 </div><!-- #page -->
 
-<div class="mask" role="dialog"></div>
-<div class="modal" role="alert">
-  <div class="modal-container"></div>
-  <button class="close" role="button">X</button>
-</div>
-
 <?php wp_footer(); ?>
 
 

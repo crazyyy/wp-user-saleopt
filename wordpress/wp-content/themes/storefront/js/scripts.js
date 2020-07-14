@@ -4,13 +4,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-if (typeof jQuery === "undefined") {
-  console.warn("jQuery hasn't loaded");
-} else {
-  console.log("jQuery " + jQuery.fn.jquery + " has loaded");
-} // Place any jQuery/helper plugins in here.
-
-
 var $ = jQuery;
 
 function CheckCustomer() {
@@ -22,14 +15,14 @@ function CheckCustomer() {
   return result == 'yes' ? 'customer' : 'visitor';
 }
 
-function GetCustomerSale() {
+function GetCustomerDisc() {
   var res = jQuery.ajax({
     url: adminAjax.ajaxurl,
     type: 'POST',
     dataType: "json",
     async: false,
     data: {
-      action: 'customer_sale',
+      action: 'cust_discount',
       id: adminAjax.postID
     },
     success: function success(obj) {// console.log(obj);
@@ -38,14 +31,14 @@ function GetCustomerSale() {
   return res.status == 200 ? res.responseJSON : 0;
 }
 
-function GetVisitorSale() {
+function GetVisitorDisc() {
   var res = jQuery.ajax({
     url: adminAjax.ajaxurl,
     type: 'POST',
     dataType: "json",
     async: false,
     data: {
-      action: 'visitor_sale',
+      action: 'vis_discount',
       id: adminAjax.postID
     },
     success: function success(obj) {// console.log(obj);
@@ -120,7 +113,7 @@ if ($('body').hasClass('single-product')) {
   _asyncToGenerator(function* () {
     var isNeedShowSale = yield isUserVisitedThisPage(adminAjax.postID);
     var userstate = yield CheckCustomer();
-    var sale = userstate == 'customer' ? GetCustomerSale() : GetVisitorSale();
+    var sale = userstate == 'customer' ? GetCustomerDisc() : GetVisitorDisc();
     yield ShowSale(isNeedShowSale, sale);
     yield TrackUserActivity();
   })();
@@ -133,7 +126,6 @@ if ($('body').hasClass('single-product')) {
     }
   });
 } // modal 
-// Click function for show the Modal
 
 
 function ShowModal(message) {

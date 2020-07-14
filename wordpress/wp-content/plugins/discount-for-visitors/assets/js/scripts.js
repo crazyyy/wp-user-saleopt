@@ -110,7 +110,7 @@ if ($('body').hasClass('single-product')) {
 
     let userstate = await CheckCustomer();
 
-    let sale = userstate == 'customer' ? GetCustomerDisc() : GetVisitorDisc()
+    let sale = userstate == 'customer' ?  GetCustomerDisc() : GetVisitorDisc()
 
     await ShowSale(isNeedShowSale, sale);
 
