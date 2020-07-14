@@ -6,7 +6,6 @@ add_action('wp_enqueue_scripts', 'wpeHeaderScripts'); // Add Scripts to wp_head
 function wpeHeaderScripts() {
     global $wp_query;
 
-  //  Load footer scripts (footer.php)
   wp_register_script('wpeScripts', get_template_directory_uri() . '/js/scripts.js', array(), '1.0.0', true);
   wp_enqueue_script('wpeScripts');
   wp_localize_script( 'wpeScripts', 'adminAjax', array(
